@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Task Manager - Week 3 Project</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <h1>Task Manager ✅</h1>
+
+    <form id="task-form">
+      <input
+        type="text"
+        id="task-input"
+        placeholder="Enter a new task..."
+        autocomplete="off"
+      />
+      <button type="submit">Add Task</button>
+    </form>
+
+    <div class="task-stats">
+      <span>Total: <span id="total-count">0</span></span>
+      <span>Completed: <span id="completed-count">0</span></span>
+    </div>
+
+    <ul id="task-list"></ul>
+  </div>
+
+  
+  <script>
+    const taskForm = document.getElementById("task-form");
+    const taskInput = document.getElementById("task-input");
+    const taskList = document.getElementById("task-list");
+    const totalCountSpan = document.getElementById("total-count");
+    const completedCountSpan = document.getElementById("completed-count");
+
+    let totalTasks = 0;
+    let completedTasks = 0;
+
+    function updateStats() {
+      totalCountSpan.textContent = totalTasks;
+      completedCountSpan.textContent = completedTasks;
+      console.log("Stats updated:", { totalTasks, completedTasks });
+    }
+
+    function createTaskElement(taskText) {
+      const li = document.createElement("li");
+      li.classList.add("task-item");
+
+      const leftDiv = document.createElement("div");
+      leftDiv.classList.add("task-left");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.classList.add("task-checkbox");
+
+      const span = document.createElement("span");
+      span.classList.add("task-text");
+      span.textContent = taskText;
+
+      leftDiv.appendChild(checkbox);
+      leftDiv.appendChild(span);
+
+      const deleteBtn = document.createElement("button");
+      deleteBtn.classList.add("delete-btn");
+      deleteBtn.textContent = "Delete";
+
+      li.appendChild(leftDiv);
+      li.appendChild(deleteBtn);
+
+      checkbox.addEventListener("change", () => {
+        console.log("Checkbox changed:", checkbox.checked, "for task:", taskText);
+
+        if (checkbox.checked) {
+          span.classList.add("completed");
+          completedTasks++;
+        } else {
+          span.classList.remove("completed");
+          completedTasks--;
+        }
+        updateStats();
+      });
+
+      deleteBtn.addEventListener("click", () => {
+        console.log("Deleting task:", taskText);
+
+        if (checkbox.checked) {
+          completedTasks--;
+        }
+        totalTasks--;
+
+        taskList.removeChild(li);
+
+        updateStats();
+      });
+
+      return li;
+    }
+
+    taskForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+
+      const text = taskInput.value.trim();
+      console.log("Form submitted. Input:", text);
+
+      if (text === "") {
+        alert("Please enter a task first!");
+        return;
+      }
+
+      const taskElement = createTaskElement(text);
+      taskList.appendChild(taskElement);
+
+      totalTasks++;
+      updateStats();
+
+      taskInput.value = "";
+    });
+  </script>
+  
+
+</body>
+</html>
